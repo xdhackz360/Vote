@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 # Store vote data in memory (replace with database in production)
 vote_channels = {}
 vote_counts = {}
+user_data = {}  # Dictionary to store user-specific data
 
 # Replace these with your actual API details
 API_ID = "28239710"
@@ -46,12 +47,12 @@ async def start_command(client, message: Message):
 @app.on_message(filters.command("vote") & filters.private)
 async def vote_command(client, message: Message):
     await message.reply_text("Please send me your channel username (e.g., @channel):", parse_mode=ParseMode.MARKDOWN)
-    client.user_data[message.from_user.id] = {'expecting_channel': True}
+    user_data[message.from_user.id] = {'expecting_channel': True}
 
 @app.on_message(filters.text & filters.private)
 async def handle_channel_response(client, message: Message):
     user_id = message.from_user.id
-    if 'expecting_channel' not in client.user_data.get(user_id, {}):
+    if 'expecting_channel' not in user_data.get(user_id, {}):
         return
 
     channel_username = message.text.strip()
@@ -105,7 +106,7 @@ Participation Link:
         logger.error(f"Channel creation error: {e}")
 
     finally:
-        del client.user_data[user_id]['expecting_channel']
+        del user_data[user_id]['expecting_channel']
 
 async def handle_participation(client, message: Message):
     if len(message.command) < 2:
