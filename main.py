@@ -31,17 +31,17 @@ async def start_command(client, message: Message):
 
     keyboard = [
         [
-            InlineKeyboardButton("Owner", url="https://t.me/owner_username"),
-            InlineKeyboardButton("Updates", url="https://t.me/updates_channel")
+            InlineKeyboardButton("Owner", url="https://t.me/hmm_Smokie"),
+            InlineKeyboardButton("Updates", url="https://t.me/BotCodeVerse")
         ],
-        [InlineKeyboardButton("Add to Channel", url="https://t.me/your_bot?startchannel=true")]
+        [InlineKeyboardButton("Add to Channel", url="https://t.me/your_bot?startchannel=new&admin=post_messages+delete_messages+edit_messages+pin_messages+change_info+invite_users+promote_members")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_text = """
-» ᴛᴏ ᴄʀᴇᴀᴛᴇ ᴀᴜᴛᴏ ᴠᴏᴛᴇ ᴄʀᴇᴀᴛᴏʀ ꜰᴏʀ ʏᴏᴜʀ ᴄʜᴀᴛ, ᴜꜱᴇ /vote ᴄᴏᴍᴍᴀɴᴅ.
-‣ ᴠᴏᴛᴇ-ᴘᴏʟʟ - ɢɪᴠᴇᴀᴡᴀʏ
-ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ
+**» To create auto vote creator for your chat, use the /vote command.**
+**‣ Vote-Poll - Giveaway**
+If you need any help, then DM to my [owner](https://t.me/hmm_Smokie).
 """
     await message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
 
@@ -94,12 +94,12 @@ async def handle_channel_response(client, message: Message):
         participation_link = f"https://t.me/{bot_username}?start={clean_username}"
 
         success_message = f"""
-» ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴠᴏᴛᴇ-ᴘᴏʟʟ ᴄʀᴇᴀᴛᴇᴅ.
-• ᴄʜᴀᴛ: {channel_username}
-• ᴇᴍᴏᴊɪ: {selected_emoji}
+**» Successfully vote-poll created.**
+**• Chat:** {channel_username}
+**• Emoji:** {selected_emoji}
 
 Participation Link:
-{participation_link}
+[Click here to participate]({participation_link})
 """
         await message.reply_text(success_message, parse_mode=ParseMode.MARKDOWN)
 
@@ -132,13 +132,13 @@ async def handle_participation(client, message: Message):
     )]]
 
     participant_message = f"""
-[⚡] PARTICIPANT DETAILS [⚡]
-‣ ᴜꜱᴇʀ: {user.first_name}
-‣ ᴜꜱᴇʀ-ɪᴅ: {user.id}
-‣ ᴜꜱᴇʀɴᴀᴍᴇ: @{user.username if user.username else "N/A"}
+[⚡] **PARTICIPANT DETAILS** [⚡]
+**‣ User:** {user.first_name}
+**‣ User ID:** {user.id}
+**‣ Username:** @{user.username if user.username else "N/A"}
 
-ɴᴏᴛᴇ: ᴏɴʟʏ ᴄʜᴀɴɴᴇʟ ꜱᴜʙꜱᴄʀɪʙᴇʀꜱ ᴄᴀɴ ᴠᴏᴛᴇ.
-×× ᴄʀᴇᴀᴛᴇᴅ ʙʏ - ᴠᴏᴛᴇ ʙᴏᴛ (https://t.me/{client.me.username})
+**Note: Only channel subscribers can vote.**
+**×× Created by - [Vote Bot](https://t.me/{client.me.username})**
 """
     try:
         await client.send_message(
@@ -147,9 +147,9 @@ async def handle_participation(client, message: Message):
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN
         )
-        await message.reply_text("✅ sᴜᴄᴄᴇssғᴜʟʟʏ ᴘᴀʀᴛɪᴄɪᴘᴀᴛᴇᴅ.", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text("**✅ Successfully participated.**", parse_mode=ParseMode.MARKDOWN)
     except Exception as e:
-        await message.reply_text("❌ Error posting to channel. Please make sure I still have admin permissions.", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text("**❌ Error posting to channel. Please make sure I still have admin permissions.**", parse_mode=ParseMode.MARKDOWN)
         logger.error(f"Participation error: {e}")
 
 @app.on_callback_query()
@@ -181,10 +181,11 @@ async def button_callback(client, callback_query):
 
         # Show vote confirmation dialog
         success_text = f"""
-{vote_channels[channel_username]['channel_name']}
+**{vote_channels[channel_username]['channel_name']}**
 Successfully Voted.
 {vote_channels[channel_username]['emoji']} - {current_votes}
-Counters On The Post Will Be Updated Soon."""
+Counters On The Post Will Be Updated Soon.
+"""
 
         await callback_query.answer(success_text, show_alert=True)
 
