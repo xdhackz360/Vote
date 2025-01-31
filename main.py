@@ -34,7 +34,7 @@ async def start_command(client, message: Message):
             InlineKeyboardButton("Owner", url="https://t.me/hmm_Smokie"),
             InlineKeyboardButton("Updates", url="https://t.me/BotCodeVerse")
         ],
-        [InlineKeyboardButton("Add to Channel", url="https://t.me/your_bot?startchannel=new&admin=post_messages+delete_messages+edit_messages+pin_messages+change_info+invite_users+promote_members")]
+        [InlineKeyboardButton("Add to Channel", url="https://t.me/SmokieTest2Bot?startchannel=new&admin=post_messages+delete_messages+edit_messages+pin_messages+change_info+invite_users+promote_members")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
