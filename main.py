@@ -6,7 +6,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname=s - %(message)s', level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,8 @@ API_ID = "28239710"
 API_HASH = "7fc5b35692454973318b86481ab5eca3"
 BOT_TOKEN = "7629248955:AAEDVLI83wNW6Yv5kX3drnSjatzVfi2wUig"
 
+PHOTO_URL = "https://t.me/abir_x_official_developer/155"
+
 app = Client("vote_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 @app.on_message(filters.command("start") & filters.private)
@@ -34,7 +36,7 @@ async def start_command(client, message: Message):
             InlineKeyboardButton("Owner", url="https://t.me/hmm_Smokie"),
             InlineKeyboardButton("Updates", url="https://t.me/BotCodeVerse")
         ],
-        [InlineKeyboardButton("Add to Channel", url="https://t.me/your_bot?startchannel=new&admin=post_messages+delete_messages+edit_messages+pin_messages+change_info+invite_users+promote_members")]
+        [InlineKeyboardButton("Add to Channel", url="https://t.me/SmokieTest2Bot?startchannel=new&admin=post_messages+delete_messages+edit_messages+pin_messages+change_info+invite_users+promote_members")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -43,11 +45,11 @@ async def start_command(client, message: Message):
 **‣ Vote-Poll - Giveaway**
 If you need any help, then DM to my [owner](https://t.me/hmm_Smokie).
 """
-    await message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
+    await message.reply_photo(PHOTO_URL, caption=welcome_text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
 
 @app.on_message(filters.command("vote") & filters.private)
 async def vote_command(client, message: Message):
-    await message.reply_text("Please send me your channel username (e.g., @channel):", parse_mode=ParseMode.MARKDOWN)
+    await message.reply_text("Please send me your channel username (e.g., @channel):", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     user_data[message.from_user.id] = {'expecting_channel': True}
 
 @app.on_message(filters.text & filters.private)
@@ -66,11 +68,11 @@ async def handle_channel_response(client, message: Message):
         user_member = await client.get_chat_member(chat.id, user_id)
 
         if not (bot_member.status == ChatMemberStatus.ADMINISTRATOR or bot_member.status == ChatMemberStatus.OWNER):
-            await message.reply_text("Please add me as an admin in the channel!", parse_mode=ParseMode.MARKDOWN)
+            await message.reply_text("Please add me as an admin in the channel!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
             return
 
         if not (user_member.status == ChatMemberStatus.ADMINISTRATOR or user_member.status == ChatMemberStatus.OWNER):
-            await message.reply_text("You must be an admin in the channel to use this command!", parse_mode=ParseMode.MARKDOWN)
+            await message.reply_text("You must be an admin in the channel to use this command!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
             return
 
         # Generate single random emoji
@@ -101,10 +103,10 @@ async def handle_channel_response(client, message: Message):
 Participation Link:
 [Click here to participate]({participation_link})
 """
-        await message.reply_text(success_message, parse_mode=ParseMode.MARKDOWN)
+        await message.reply_photo(PHOTO_URL, caption=success_message, parse_mode=ParseMode.MARKDOWN)
 
     except Exception as e:
-        await message.reply_text(f"Error: Could not access the channel. Make sure:\n1. The channel username is correct\n2. I am an admin in the channel\n3. I have permission to post messages", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text(f"Error: Could not access the channel. Make sure:\n1. The channel username is correct\n2. I am an admin in the channel\n3. I have permission to post messages", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         logger.error(f"Channel creation error: {e}")
 
     finally:
@@ -112,14 +114,14 @@ Participation Link:
 
 async def handle_participation(client, message: Message):
     if len(message.command) < 2:
-        await message.reply_text("Invalid participation link!", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text("Invalid participation link!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         return
 
     channel_username = message.command[1]  # Already clean username from start command
     user = message.from_user
 
     if channel_username not in vote_channels:
-        await message.reply_text("This vote poll doesn't exist!", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text("This vote poll doesn't exist!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         return
 
     channel_info = vote_channels[channel_username]
@@ -141,15 +143,17 @@ async def handle_participation(client, message: Message):
 **×× Created by - [Vote Bot](https://t.me/{client.me.username})**
 """
     try:
-        await client.send_message(
+        await client.send_photo(
             chat_id=channel_info['chat_id'],
-            text=participant_message,
+            photo=PHOTO_URL,
+            caption=participant_message,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True
         )
-        await message.reply_text("**✅ Successfully participated.**", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text("**✅ Successfully participated.**", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     except Exception as e:
-        await message.reply_text("**❌ Error posting to channel. Please make sure I still have admin permissions.**", parse_mode=ParseMode.MARKDOWN)
+        await message.reply_text("**❌ Error posting to channel. Please make sure I still have admin permissions.**", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         logger.error(f"Participation error: {e}")
 
 @app.on_callback_query()
