@@ -1,7 +1,7 @@
 import logging
 import random
 from pyrogram import Client, filters
-from pyrogram.enums import ParseMode
+from pyrogram.enums import ChatMemberStatus, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 # Enable logging
@@ -64,12 +64,12 @@ async def handle_channel_response(client, message: Message):
         bot_member = await client.get_chat_member(chat.id, client.me.id)
         user_member = await client.get_chat_member(chat.id, user_id)
 
-        if not bot_member.can_post_messages:
-            await message.reply_text("Please add me as an admin with posting permissions in the channel!", parse_mode=ParseMode.MARKDOWN)
+        if not (bot_member.status == ChatMemberStatus.ADMINISTRATOR or bot_member.status == ChatMemberStatus.OWNER):
+            await message.reply_text("Please add me as an admin in the channel!", parse_mode=ParseMode.MARKDOWN)
             return
 
-        if not user_member.can_post_messages:
-            await message.reply_text("You must be an admin with posting permissions in the channel to use this command!", parse_mode=ParseMode.MARKDOWN)
+        if not (user_member.status == ChatMemberStatus.ADMINISTRATOR or user_member.status == ChatMemberStatus.OWNER):
+            await message.reply_text("You must be an admin in the channel to use this command!", parse_mode=ParseMode.MARKDOWN)
             return
 
         # Generate single random emoji
