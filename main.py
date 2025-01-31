@@ -68,11 +68,11 @@ async def handle_channel_response(client, message: Message):
         user_member = await client.get_chat_member(chat.id, user_id)
 
         if not (bot_member.status == ChatMemberStatus.ADMINISTRATOR or bot_member.status == ChatMemberStatus.OWNER):
-            await message.reply_text("Please add me as an admin in the channel!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            await message.reply_text("Please add me as an admin in the channel!", parse_mode=ParseMode.MARKDOWN)
             return
 
         if not (user_member.status == ChatMemberStatus.ADMINISTRATOR or user_member.status == ChatMemberStatus.OWNER):
-            await message.reply_text("You must be an admin in the channel to use this command!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            await message.reply_text("You must be an admin in the channel to use this command!", parse_mode=ParseMode.MARKDOWN)
             return
 
         # Generate single random emoji
@@ -106,7 +106,7 @@ Participation Link:
         await message.reply_photo(PHOTO_URL, caption=success_message, parse_mode=ParseMode.MARKDOWN)
 
     except Exception as e:
-        await message.reply_text(f"Error: Could not access the channel. Make sure:\n1. The channel username is correct\n2. I am an admin in the channel\n3. I have permission to post messages", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        await message.reply_text(f"Error: Could not access the channel. Make sure:\n1. The channel username is correct\n2. I am an admin in the channel\n3. I have permission to post messages", parse_mode=ParseMode.MARKDOWN)
         logger.error(f"Channel creation error: {e}")
 
     finally:
@@ -114,14 +114,14 @@ Participation Link:
 
 async def handle_participation(client, message: Message):
     if len(message.command) < 2:
-        await message.reply_text("Invalid participation link!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        await message.reply_text("Invalid participation link!", parse_mode=ParseMode.MARKDOWN)
         return
 
     channel_username = message.command[1]  # Already clean username from start command
     user = message.from_user
 
     if channel_username not in vote_channels:
-        await message.reply_text("This vote poll doesn't exist!", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        await message.reply_text("This vote poll doesn't exist!", parse_mode=ParseMode.MARKDOWN)
         return
 
     channel_info = vote_channels[channel_username]
@@ -148,12 +148,11 @@ async def handle_participation(client, message: Message):
             photo=PHOTO_URL,
             caption=participant_message,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True
+            parse_mode=ParseMode.MARKDOWN
         )
-        await message.reply_text("**✅ Successfully participated.**", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        await message.reply_text("**✅ Successfully participated.**", parse_mode=ParseMode.MARKDOWN)
     except Exception as e:
-        await message.reply_text("**❌ Error posting to channel. Please make sure I still have admin permissions.**", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        await message.reply_text("**❌ Error posting to channel. Please make sure I still have admin permissions.**", parse_mode=ParseMode.MARKDOWN)
         logger.error(f"Participation error: {e}")
 
 @app.on_callback_query()
