@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 # Store vote data in memory (replace with database in production)
 vote_channels = {}
 vote_counts = {}
+vote_voters = {}  # Dictionary to store voters for each poll
 user_data = {}  # Dictionary to store user-specific data
 
 # Replace these with your actual API details
@@ -86,6 +87,7 @@ async def handle_channel_response(client, message: Message):
             'full_username': channel_username
         }
         vote_counts[clean_username] = 0
+        vote_voters[clean_username] = set()  # Initialize an empty set for voters
 
         # Create participation link
         bot_username = client.me.username
@@ -167,8 +169,14 @@ async def button_callback(client, callback_query):
             await callback_query.answer("Only channel subscribers can vote!", show_alert=True)
             return
 
-        # Update vote count
+        # Check if the user has already voted
+        if user_id in vote_voters[channel_username]:
+            await callback_query.answer("You have already voted!", show_alert=True)
+            return
+
+        # Update vote count and add user to voters list
         vote_counts[channel_username] += 1
+        vote_voters[channel_username].add(user_id)
         current_votes = vote_counts[channel_username]
 
         # Show vote confirmation dialog
