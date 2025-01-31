@@ -125,7 +125,7 @@ async def handle_participation(client, message: Message):
 
     # Create vote button
     keyboard = [[InlineKeyboardButton(
-        f"{emoji}",
+        f"{emoji} {vote_counts[channel_username]}",
         callback_data=f"vote|{channel_username}"
     )]]
 
@@ -160,9 +160,12 @@ async def button_callback(client, callback_query):
             await callback_query.answer("Invalid vote!", show_alert=True)
             return
 
-        # Get channel info
-        channel_info = vote_channels[channel_username]
-        emoji = channel_info['emoji']
+        # Check if the user is a subscriber
+        user_id = callback_query.from_user.id
+        member = await client.get_chat_member(vote_channels[channel_username]['chat_id'], user_id)
+        if member.status in (ChatMemberStatus.LEFT, ChatMemberStatus.BANNED):
+            await callback_query.answer("Only channel subscribers can vote!", show_alert=True)
+            return
 
         # Update vote count
         vote_counts[channel_username] += 1
@@ -170,16 +173,16 @@ async def button_callback(client, callback_query):
 
         # Show vote confirmation dialog
         success_text = f"""
-{channel_info['channel_name']}
+{vote_channels[channel_username]['channel_name']}
 Successfully Voted.
-{emoji} - {current_votes}
+{vote_channels[channel_username]['emoji']} - {current_votes}
 Counters On The Post Will Be Updated Soon."""
 
         await callback_query.answer(success_text, show_alert=True)
 
         # Update button
         keyboard = [[InlineKeyboardButton(
-            f"{emoji}",
+            f"{vote_channels[channel_username]['emoji']} {current_votes}",
             callback_data=f"vote|{channel_username}"
         )]]
 
